@@ -1,0 +1,114 @@
+{
+  "name": "BadWordsFilter",
+  "temp": "msg",
+  "event-type": "2",
+  "_id": "BWFFilterXZA",
+  "actions": [
+    {
+      "message": "1",
+      "varName": "msg",
+      "info": "2",
+      "storage": "1",
+      "varName2": "msg_text",
+      "name": "Store Message Info"
+    },
+    {
+      "behavior": "0",
+      "interpretation": "0",
+      "code": "var msgg = String(tempVars(\"msg_text\"));\nvar msg_lower = msgg.toLowerCase();\nthis.storeValue(msg_lower, 1, \"msg_lower\", cache);",
+      "storage": "0",
+      "varName": "text",
+      "name": "Run Script"
+    },
+    {
+      "call": "7",
+      "name": "Jump to Action"
+    },
+    {
+      "name": "End Action Sequence"
+    },
+    {
+      "storage": "1",
+      "varName": "msg",
+      "name": "Delete Message"
+    },
+    {
+      "name": "End Action Sequence"
+    },
+    {
+      "storage": "1",
+      "varName": "msg_lower",
+      "comparison": "5",
+      "value": "'REPLACE THIS TEXT'",
+      "iftrue": "2",
+      "iftrueVal": "5",
+      "iffalse": "0",
+      "iffalseVal": "",
+      "name": "Check Variable"
+    },
+    {
+      "storage": "1",
+      "varName": "msg_lower",
+      "comparison": "5",
+      "value": "'REPLACE THIS TEXT'",
+      "iftrue": "2",
+      "iftrueVal": "5",
+      "iffalse": "0",
+      "iffalseVal": "",
+      "name": "Check Variable"
+    },
+    {
+      "storage": "1",
+      "varName": "msg_lower",
+      "comparison": "5",
+      "value": "'REPLACE THIS TEXT'",
+      "iftrue": "2",
+      "iftrueVal": "5",
+      "iffalse": "0",
+      "iffalseVal": "",
+      "name": "Check Variable"
+    },
+    {
+      "storage": "1",
+      "varName": "msg_lower",
+      "comparison": "5",
+      "value": "'REPLACE THIS TEXT'",
+      "iftrue": "2",
+      "iftrueVal": "5",
+      "iffalse": "0",
+      "iffalseVal": "",
+      "name": "Check Variable"
+    },
+    {
+      "name": "End Action Sequence"
+    },
+    {
+      "comment": "This filter was made by DareFox#4242",
+      "color": "#ff80ff",
+      "name": "Comment"
+    },
+    {
+      "comment": "To start it work just replace text in brackets in \"Check Vairable\" actions",
+      "color": "#ff80ff",
+      "name": "Comment"
+    },
+    {
+      "comment": "Warning! Use lower case words in \"Check Variable\" actions. If you don't do this, filter will not work.",
+      "color": "#ff0000",
+      "name": "Comment"
+    },
+    {
+      "name": "End Action Sequence"
+    },
+    {
+      "comment": "Filter automaticly convert text to lower case, so you dont need write all variatons of latter cases of word :)",
+      "color": "#ff80ff",
+      "name": "Comment"
+    },
+    {
+      "comment": "If you need more words to filter, just clone \"Check Variable\" action. Right Click Mouse -> Clone Action",
+      "color": "#ff80ff",
+      "name": "Comment"
+    }
+  ]
+}
