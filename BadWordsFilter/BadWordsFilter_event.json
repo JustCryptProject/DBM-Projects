@@ -2,113 +2,75 @@
   "name": "BadWordsFilter",
   "temp": "msg",
   "event-type": "2",
-  "_id": "BWFFilterXZA",
+  "_id": "BWFilterX",
   "actions": [
+    {
+      "comment": "Just edit or add words/phrases in Action #7 «Control Variable». ",
+      "color": "#ff0000",
+      "name": "Comment"
+    },
+    {
+      "comment": "The filter works with all registers, so you do not need to create several variations of the register for one word or phrase.",
+      "color": "#ff0000",
+      "name": "Comment"
+    },
+    {
+      "changeType": "0",
+      "value": "'on'",
+      "storage": "1",
+      "varName": "checkUpdate",
+      "name": "Control Variable"
+    },
+    {
+      "changeType": "0",
+      "value": "'on'",
+      "storage": "1",
+      "varName": "devMessage",
+      "name": "Control Variable"
+    },
     {
       "message": "1",
       "varName": "msg",
       "info": "2",
       "storage": "1",
-      "varName2": "msg_text",
+      "varName2": "message_text",
       "name": "Store Message Info"
+    },
+    {
+      "comment": "<b> ⚠️ IMPORTANT: Dont forget seperate words/phrases with comma and dont delete quotes! </b>",
+      "color": "#ff0000",
+      "name": "Comment"
+    },
+    {
+      "changeType": "0",
+      "value": "'very bad word, orange, n-word, bruh'",
+      "storage": "1",
+      "varName": "badWords",
+      "name": "Control Variable"
     },
     {
       "behavior": "0",
       "interpretation": "0",
-      "code": "var msgg = String(tempVars(\"msg_text\"));\nvar msg_lower = msgg.toLowerCase();\nthis.storeValue(msg_lower, 1, \"msg_lower\", cache);",
+      "code": "/*\n\nMade by DareFox#4242 — darefox.github.io\n\nSource code: [https://github.com/DareFox/DBM-Projects]           \n\n*/\n\nvar updateIsOn = tempVars(\"checkUpdate\"); // Load user option to turn on or off check updates\nif (updateIsOn != undefined) {\n    updateIsOn = updateIsOn.toLowerCase();\n}\n\n\n/* This makes update and dev messages appear once and is reset when the bot restarts. \nThat is, there will be no update notification on every message, only on 1st*/\nvar UpdateMessage = serverVars(\"updateDontShowAgain\"); //update notification\nvar DevMessageShow = serverVars(\"DevMessageDontShowAgain\"); //dev mesage\n\nvar DevMsgIsOn = tempVars(\"devMessage\")\nif (DevMsgIsOn != undefined) {\n    DevMsgIsOn = DevMsgIsOn.toLowerCase()\n} \n\nvar version = \"1.0.0\"\nvar NameApp = 'BadWordsFilter'\nvar TypeApp = 'Event'\n\nif (updateIsOn == 'on') {\n    if (UpdateMessage != 'no') {   \n        const request = require('request');\n        request('https://darefox.github.io/dbm_build/versions.json' , function (error, response, body) {\n        var json = JSON.parse(body); // Make from string to object\n        var bdWFilter = json.dbmProjects.BadWordsFilter; \n        var VarArray = version.split('.'); // Make version like array 1.X.X - Major, X.1.X - Feautre, X.X.1 - Minor (no notification for minor).\n    \n        /*\n        Array always have 4 Objects\n\n        [0] - GitHub link to this project\n        [1] - For stable and current build, make notification only for major and some feauters updates, if update is minor - you will not have notification\n        [2] - Critical update (Bugs and etc) for certain versions of build, if you have build that have critical bug - you will have message in console.\n        [3] - Major release, if your version of this code lower than the last major version, you will have get notification in console.\n        [4] - Custom message from dev \n    \n        Graphical image of this system: https://darefox.xyz/dbm_build/UpdateSystemDBM.png (if link dont work: darefox.github.io/dbm_build/UpdateSystemDBM.png)\n    \n    \n        P.S. All this system you can turn off\n        \n        Priority to check:\n    \n        High — Critical update\n        Medium  — Major Update \n        Low — Current build (No minor updates, just features updates)\n    \n        */\n    \n        var criticalVerisons = bdWFilter[3].critcalForVersions; // Take from \"Critical\" tree\n        criticalVerisons = criticalVerisons.split('; '); // Make array of critical of versions \n    \n        var stableVersion = bdWFilter[1].version //  Take from \"Stable\" tree\n        stableVersion = stableVersion.split('.') // Make array of stable version\n    \n        var MajorVersion = bdWFilter[2].version //  Take from \"Major\" tree\n        MajorVersion = MajorVersion.split('.') // Make array of stable version\n    \n    \n        function UpdateNotification(check) {\n            switch (check) {\n                case 'Stable':\n                    var SecondsStr = 'is out of date!';\n                    var ThirdStr = 'which is already old compared to the stable build';\n                    break\n                case 'Critical':\n                    var SecondsStr = 'is in danger!';\n                    var ThirdStr = 'which have critical issue!'\n                    break\n                case 'Major':\n                    var SecondsStr = 'is out of date';\n                    var ThirdStr = 'but Major update has already been released';\n                    break\n            }\n            console.log('==========================================================')\n            console.log('Hey! Your ' + NameApp + ' [' + TypeApp + '] ' + SecondsStr);\n            console.log('Your current version: ' + version + ', ' + ThirdStr);\n            console.log('Current last stable build: ' + bdWFilter[1].version);\n            console.log('Download the latest, stable version here: ' + bdWFilter[0].gitLink);\n            if (bdWFilter[1].type.toLowerCase() != TypeApp.toLowerCase()) {\n                console.log('Pay attention that this project has turned type from ' + TypeApp + ' to ' + bdWFilter[1].type + '!');\n            }\n            console.log('');\n            console.log('(If you want to turn off these notifications, just edit Action #3 to off, and make it in quotes!)');\n            console.log('==========================================================');\n        }\n    \n        var includeCritical = criticalVerisons.includes(version); // // //\n        if (includeCritical == true) /* Critical message */ {\n            UpdateNotification('Critical')\n        } else if (MajorVersion[0] > VarArray[0]) {\n            UpdateNotification('Major')\n        } else if (stableVersion[0] > VarArray[0]) {\n            UpdateNotification('Stable')\n        } else if (stableVersion[1] > VarArray[1]) {\n            UpdateNotification('Stable')\n        }\n        \n\n    });\n    }\n}\n \n// Check if dev message option is turned on\nif (DevMsgIsOn == 'on') {\n    if (DevMessageShow != 'no') {\n        const request = require('request');\n        request('https://darefox.github.io/dbm_build/versions.json' , function (error, response, body) {\n        var json = JSON.parse(body); // Make from string to object\n        var bdWFilter = json.dbmProjects.BadWordsFilter; \n            \n        var devMessage = bdWFilter[4].customMessage //Take from \"DevMessage\" tree\n        if (devMessage.toLowerCase() != 'no') {\n                console.log(NameApp + ' [' + TypeApp + '] — ' + 'Message from Dev: ' + devMessage);\n            }\n        })\n    }\n}\n\nvar UpdateMessage = 'no' // do not show this again \nvar DevMessageShow = 'no' //do not show dev message again\n\nvar badWords = tempVars(\"badWords\"); //bad words (yes)\nvar str = tempVars(\"message_text\");\nstr = str.toLowerCase() // message text\n// convert badwords to lower case and make array with this words\nvar lowBad = badWords.toLowerCase(); \nvar arrayBad = lowBad.split(','); \n// variables to work code\nvar num = 0;\nvar check = 0;\nvar slice = 0;\nvar slice_end = 0;\n\ndo {\n\n//Check space in the begging \nvar wordFromArray = arrayBad[num]\nvar letFromWord = wordFromArray[check]\nif (letFromWord == ' ') {\n    do {\n        check++\n        letFromWord = wordFromArray[check]\n        if (letFromWord == ' ') {\n            slice++\n        }\n    } while (letFromWord == ' ')\n} else {\n    wordFromArray = ' ' + wordFromArray;\n}\n\n//Check space in the end\nvar lengthWord = wordFromArray.length - 1 \nvar letFromWord = wordFromArray[lengthWord]\nif (letFromWord == ' ') {\n    do {\n        lengthWord--\n        letFromWord = wordFromArray[lengthWord]\n        if (letFromWord == ' ') {\n            slice_end++\n        }\n    } while (letFromWord == ' ')\n} else {\n    wordFromArray = wordFromArray + ' ';\n}\n\nslice_end = wordFromArray.length - slice_end\nvar sliced = wordFromArray.slice(slice, slice_end)\nvar change = arrayBad.splice(num, 1, sliced);\n//reset vars\ncheck = 0\nslice = 0\nslice_end = 0 \n// to next word until end of array\nnum++\n} while (num < arrayBad.length) \n\n// Convert message to format *space* *message* *space*\nvar letFromText = str[0]\nif (letFromText != ' ') {\n    str = \" \" + str\n}\n\n\nvar letFromText = str [str.length - 1];\nif (letFromText != \" \") {\n    str = str + ' '\n}\n\nif (arrayBad.some(function(v) { \n    return str.indexOf(v) >= 0; })) \n    {\n    var filter = 'detected' // Temp variable 'filter' gives 'detected' if there is bad words in message\n    this.storeValue(filter, 1 ,\"filter\", cache);\n\n} else {\n    var filter = 'not detected' // Temp variable 'filter' gives 'not detected' if there is no bad words in message \n    this.storeValue(filter, 1 ,\"filter\", cache);\n}\n\nthis.storeValue(UpdateMessage, 2, \"updateDontShowAgain\", cache) // 13 column check\nthis.storeValue(UpdateMessage, 2, \"DevMessageDontShowAgain\", cache) // 13 column check",
       "storage": "0",
-      "varName": "text",
+      "varName": "",
       "name": "Run Script"
     },
     {
-      "call": "7",
-      "name": "Jump to Action"
-    },
-    {
-      "name": "End Action Sequence"
+      "storage": "1",
+      "varName": "filter",
+      "comparison": "2",
+      "value": "'detected'",
+      "iftrue": "0",
+      "iftrueVal": "",
+      "iffalse": "1",
+      "iffalseVal": "",
+      "name": "Check Variable"
     },
     {
       "storage": "1",
       "varName": "msg",
       "name": "Delete Message"
-    },
-    {
-      "name": "End Action Sequence"
-    },
-    {
-      "storage": "1",
-      "varName": "msg_lower",
-      "comparison": "5",
-      "value": "'REPLACE THIS TEXT'",
-      "iftrue": "2",
-      "iftrueVal": "5",
-      "iffalse": "0",
-      "iffalseVal": "",
-      "name": "Check Variable"
-    },
-    {
-      "storage": "1",
-      "varName": "msg_lower",
-      "comparison": "5",
-      "value": "'REPLACE THIS TEXT'",
-      "iftrue": "2",
-      "iftrueVal": "5",
-      "iffalse": "0",
-      "iffalseVal": "",
-      "name": "Check Variable"
-    },
-    {
-      "storage": "1",
-      "varName": "msg_lower",
-      "comparison": "5",
-      "value": "'REPLACE THIS TEXT'",
-      "iftrue": "2",
-      "iftrueVal": "5",
-      "iffalse": "0",
-      "iffalseVal": "",
-      "name": "Check Variable"
-    },
-    {
-      "storage": "1",
-      "varName": "msg_lower",
-      "comparison": "5",
-      "value": "'REPLACE THIS TEXT'",
-      "iftrue": "2",
-      "iftrueVal": "5",
-      "iffalse": "0",
-      "iffalseVal": "",
-      "name": "Check Variable"
-    },
-    {
-      "name": "End Action Sequence"
-    },
-    {
-      "comment": "This filter was made by DareFox#4242",
-      "color": "#ff80ff",
-      "name": "Comment"
-    },
-    {
-      "comment": "To start it work just replace text in brackets in \"Check Vairable\" actions",
-      "color": "#ff80ff",
-      "name": "Comment"
-    },
-    {
-      "comment": "Warning! Use lower case words in \"Check Variable\" actions. If you don't do this, filter will not work.",
-      "color": "#ff0000",
-      "name": "Comment"
-    },
-    {
-      "name": "End Action Sequence"
-    },
-    {
-      "comment": "Filter automaticly convert text to lower case, so you dont need write all variatons of latter cases of word :)",
-      "color": "#ff80ff",
-      "name": "Comment"
-    },
-    {
-      "comment": "If you need more words to filter, just clone \"Check Variable\" action. Right Click Mouse -> Clone Action",
-      "color": "#ff80ff",
-      "name": "Comment"
     }
   ]
 }
